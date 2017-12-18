@@ -1,0 +1,164 @@
+﻿@model AdHolder.Models.Product
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LayoutDashboard.cshtml";
+}
+@{
+    List<SelectListItem> listItems = new List<SelectListItem>();
+    listItems.Add(new SelectListItem
+    {
+        Text = "Cash On Delivery",
+        Value = "0"
+    });
+    listItems.Add(new SelectListItem
+    {
+        Text = "Credit Card",
+        Value = "1"
+    });
+    listItems.Add(new SelectListItem
+    {
+        Text = "Debit Card",
+        Value = "2"
+    });
+}
+
+@{
+    List<SelectListItem> listItemForArea = new List<SelectListItem>();
+    listItems.Add(new SelectListItem
+    {
+        Text = "",
+        Value = ""
+    });
+}
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/jquery.validate.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.6/jquery.validate.unobtrusive.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-ajax-unobtrusive@3.2.4/jquery.unobtrusive-ajax.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+<div class="row">
+    <div class="panel-title">
+        <button type="button" id="create-product" class="btn btn-primary" data-toggle="modal">Add Product</button>
+    </div>
+    <!-- Modal -->
+    <div id="myModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">New Product Details</h4>
+                </div>
+                @*@using (Html.BeginForm("AddPaymentInfo", "Business", FormMethod.Post, new { @class = "form-horizontal" }))*@
+                @using (Ajax.BeginForm("AddProduct", "Business",
+                       new AjaxOptions()
+                       {
+                           OnSuccess = "onSuccess",
+                           HttpMethod = "POST",
+                           OnFailure = "onFailure"
+                       }, new { @class = "form-horizontal" }))
+                { 
+                    <div class="modal-body">
+                        <div class="form-group">
+                            @Html.HiddenFor(h => h.ProductId)
+                            <div class="col-sm-4">
+                                @Html.LabelFor(l => l.ProductTitle, new { @class = "" })
+                                @Html.TextBoxFor(t => t.ProductTitle, new { @class = "form-control", @placeholder = "Product Title" })
+                                @Html.ValidationMessageFor(t => t.ProductTitle)
+                            </div>
+                            <div class="col-sm-4">
+                                @Html.LabelFor(l => l.Image, new { @class = "" })
+                                <div class="col-md-10">
+                                    <input type="file" class="btn btn-default" id="Image" name="Image">
+                                    <p class="help-block">
+                                        Select Image...
+                                    </p>
+                                </div>
+                                @Html.ValidationMessageFor(t => t.Image)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-12">
+                                @Html.LabelFor(l => l.Description, new { @class = "" })
+                                @Html.TextBoxFor(t => t.Description, new { @class = "form-control", @placeholder = "Description" })
+                                @Html.ValidationMessageFor(t => t.Description)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-6">
+                                @*sr-only*@
+                                @Html.LabelFor(l => l.CityId, new { @class = "" })
+                                @Html.DropDownListFor(model => model.CityId, (IEnumerable<SelectListItem>)ViewBag.Cities, "Select City", new { @class = "form-control" })
+                                @Html.ValidationMessageFor(t => t.CityId)
+                            </div>
+                            <div class="col-sm-6">
+                                @Html.LabelFor(l => l.AreaId, new { @class = "" })
+                                @Html.DropDownListFor(model => model.AreaId, listItemForArea, "Select Area", new { @class = "form-control" })
+                                @Html.ValidationMessageFor(t => t.AreaId)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-6">
+                                @Html.LabelFor(l => l.FarePerDay, new { @class = "" })
+                                @Html.TextBoxFor(t => t.FarePerDay, new { @class = "form-control", @placeholder = "Fare Per Day" })
+                                @Html.ValidationMessageFor(t => t.FarePerDay)
+                            </div>
+                            <div class="col-sm-6">
+                                @Html.LabelFor(l => l.PaymentOption, new { @class = "" })
+                                @Html.DropDownListFor(model => model.PaymentOption, listItems, "Select Payment Status", new { @class = "form-control" })
+                                @Html.ValidationMessageFor(t => t.PaymentOption)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="submit" class="btn btn-primary" value="Save Product" />
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                }
+            </div>
+
+        </div>
+    </div>
+
+    @* Modal End *@
+
+</div>
+
+<link href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css" rel="stylesheet" />
+<link href="https://cdn.datatables.net/responsive/2.1.1/css/responsive.bootstrap.min.css" rel="stylesheet" />
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
+<link href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" rel="stylesheet" />
+<link href="https://cdn.datatables.net/buttons/1.4.2/css/buttons.dataTables.min.css" rel="stylesheet" />
+
+<script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap4.min.js "></script>
+<script src="https://cdn.datatables.net/buttons/1.4.2/js/dataTables.buttons.min.js"></script>
+
+<script src="https://cdn.datatables.net/buttons/1.4.2/js/buttons.flash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.4.2/js/buttons.html5.min.js"></script>
+
+<script src="https://cdn.datatables.net/buttons/1.4.2/js/buttons.print.min.js"></script>
+<script src="https://cdn.datatables.net/select/1.2.3/js/dataTables.select.min.js"></script>
+
+
+
+<script type="text/javascript">
+    $('#create-product').click(function () {
+
+        $('#myModal .modal-title').html('New Product Details');
+        $('#myModal .btn-primary').html('Save Product');
+
+        //Show Modal
+        $('#myModal').modal('show');
+
+    });
+</script>

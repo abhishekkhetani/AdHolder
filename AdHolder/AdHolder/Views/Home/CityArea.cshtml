@@ -1,0 +1,118 @@
+﻿@model AdHolder.Models.City
+@{
+    ViewBag.Title = "CityArea";
+    Layout = "~/Views/Shared/_LayoutDashboard.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="content-box-large">
+            <div class="panel-heading">
+                <div class="panel-title">Add City</div>
+            </div>
+            <div class="panel-body">
+                @using (Ajax.BeginForm("AddCity", "Home",
+                       new AjaxOptions()
+                       {
+                           OnSuccess = "onSuccess",
+                           HttpMethod = "POST",
+                           OnFailure = "onFailure"
+                       }, new { @class = "form-horizontal" }))
+                { 
+                    <div class="form-group">
+                        <div class="col-sm-10">
+                            @*<input type="email" class="form-control" id="inputEmail3" placeholder="Email">*@
+                            @Html.TextBoxFor(t => t.Name, new { @class = "form-control", @placeholder = "City Name" })
+                            @Html.ValidationMessageFor(t => t.Name)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-10">
+                            <input type="submit" class="btn btn-primary signup" value="Save City" />
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="content-box-large">
+                <div class="panel-heading">
+                    <div class="panel-title">Add Area</div>
+                </div>
+                <div class="panel-body">
+                    @using (Ajax.BeginForm("AddArea", "Account",
+                       new AjaxOptions()
+                       {
+                           OnSuccess = "onSuccess",
+                           HttpMethod = "POST",
+                           OnFailure = "onFailure"
+                       }, new { @class = "form-horizontal" }))
+                    { 
+                        <div class="form-group">
+                            <div class="col-sm-10">
+                                @*<input type="email" class="form-control" id="inputEmail3" placeholder="Email">*@
+                                @Html.DropDownListFor(t => t.CityId, (IEnumerable<SelectListItem>)ViewBag.Cities, "Select City", new { @class = "form-control", @placeholder = "City Name" })
+                                @Html.ValidationMessageFor(t => t.Name)
+                            </div>
+                        </div>                    
+                        <div class="form-group">
+                            <div class="col-sm-10">
+                                @*<input type="email" class="form-control" id="inputEmail3" placeholder="Email">*@
+                                @Html.TextBoxFor(t => t.AreaName, new { @class = "form-control", @placeholder = "Area Name" })
+                                @Html.ValidationMessageFor(t => t.AreaName)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-10">
+                                <input type="submit" class="btn btn-primary signup" value="Save Area" />
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+
+        function onSuccess(data) {
+            if (data == "success") {
+                $('#CityId').val($("#CityId option:first").val());
+                $('#AreaName').val('');
+
+                alert("Successfully Saved.");
+                return false;
+            }
+            else if (data == "exist") {
+                alert("Already Exist");
+                return false;
+            }
+            else if (data == "error") {
+                alert("Please enter data properly");
+                return false;
+            }
+            else {
+                $('#CityId option').each(function () {
+                    $(this).remove();
+                });
+                $('#CityId')
+                    .append($("<option></option>")
+                                   .attr("value", "")
+                                   .text("Select City"));
+                $.each(data, function (key, data) {
+                    $('#CityId')
+                        .append($("<option></option>")
+                                   .attr("value", data.Value)
+                                   .text(data.Text));
+                });
+                $('#Name').val('');
+                alert("Successfully Added");
+            }
+        }
+
+        function onFailure(data) {
+        }
+    </script>

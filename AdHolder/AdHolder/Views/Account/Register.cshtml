@@ -1,0 +1,106 @@
+﻿@model AdHolder.Models.Register
+
+@{
+    ViewBag.Title = "Register";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{
+    List<SelectListItem> listItems = new List<SelectListItem>();
+    listItems.Add(new SelectListItem
+    {
+        Text = "Male",
+        Value = "Male"
+    });
+    listItems.Add(new SelectListItem
+    {
+        Text = "Female",
+        Value = "Female"
+    });
+    listItems.Add(new SelectListItem
+    {
+        Text = "Other",
+        Value = "Other"
+    });
+}
+
+
+<div class="page-content container">
+    <div class="row">
+        <div class="col-md-4 col-md-offset-4">
+            <div class="login-wrapper">
+                <div class="box">
+                    @using (Ajax.BeginForm("AddRegister", "Register",
+                       new AjaxOptions()
+                       {
+                           OnSuccess = "onSuccess",
+                           HttpMethod = "POST",
+                           OnFailure = "onFailure"
+                       }, new { @class = "form-horizontal" }))
+                    { 
+                        <div class="content-wrap">
+                            <h6>Sign Up</h6>
+                            @Html.TextBoxFor(t => t.FirstName, new { @class = "form-control", @placeholder = "First Name" })
+                            @Html.ValidationMessageFor(t => t.FirstName)
+
+                            @Html.TextBoxFor(t => t.MiddleName, new { @class = "form-control", @placeholder = "Middle Name" })
+                            @Html.ValidationMessageFor(t => t.MiddleName)
+
+                            @Html.TextBoxFor(t => t.LastName, new { @class = "form-control", @placeholder = "Last Name" })
+                            @Html.ValidationMessageFor(t => t.LastName)
+
+                            @*<input class="form-control" type="text" placeholder="E-mail address">*@
+                            @Html.TextBoxFor(t => t.Email, new { @class = "form-control", @placeholder = "E-mail address" })
+                            @Html.ValidationMessageFor(t => t.Email)
+
+                            @Html.TextBoxFor(t => t.Phone, new { @class = "form-control", @placeholder = "Phone/Mobile Number" })
+                            @Html.ValidationMessageFor(t => t.Phone)
+
+
+                            @*<input class="form-control" type="password" placeholder="Password">*@
+                            @Html.TextBoxFor(t => t.Password, new { @class = "form-control", @placeholder = "Password", @type="password" })
+                            @Html.ValidationMessageFor(t => t.Password)
+
+                            <input class="form-control" type="password" id="confirm-password" placeholder="Confirm Password">
+
+                            @Html.TextBoxFor(t => t.Address, new { @class = "form-control", @placeholder = "Home/Business address" })
+                            @Html.ValidationMessageFor(t => t.Address)
+
+                            @Html.DropDownListFor(model => model.Gender, listItems, "Select Gender", new { @class = "form-control" })
+                            @Html.ValidationMessageFor(t => t.Gender)
+
+                            <div class="action">
+                                @*<a class="btn btn-primary signup" href="index.html">Sign Up</a>*@
+                                <input type="submit" class="btn btn-primary signup" value="Submit" />
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <div class="already">
+                    <p>Have an account already?</p>
+                    <a href="@Url.Action("LoginIndex", "Account")">Login</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+    function onSuccess(data) {
+        if (data == "success") {
+            window.location.href = '/LoginIndex';
+        }
+        else if (data == "exist") {
+            alert("Already Exist");
+        }
+        else {
+            alert("Please enter data properly");
+        }
+    }
+
+    function onFailure(data) {
+    }
+</script>
