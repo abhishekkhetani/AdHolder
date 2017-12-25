@@ -38,6 +38,12 @@ namespace AdHolder.Models
         public int CityId { get; set; }
 
         [NotMapped]
+        [DisplayName("Images")]
+        public HttpPostedFileBase Images { get; set; }
+
+        [NotMapped]
+        public string AreaName { get; set; }
+
         [Required]
         [DisplayName("Area")]
         public int AreaId { get; set; }

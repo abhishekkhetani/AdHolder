@@ -8,27 +8,22 @@
     listItems.Add(new SelectListItem
     {
         Text = "Cash On Delivery",
-        Value = "0"
-    });
-    listItems.Add(new SelectListItem
-    {
-        Text = "Credit Card",
         Value = "1"
     });
     listItems.Add(new SelectListItem
     {
-        Text = "Debit Card",
+        Text = "Credit Card",
         Value = "2"
+    });
+    listItems.Add(new SelectListItem
+    {
+        Text = "Debit Card",
+        Value = "3"
     });
 }
 
 @{
     List<SelectListItem> listItemForArea = new List<SelectListItem>();
-    listItems.Add(new SelectListItem
-    {
-        Text = "",
-        Value = ""
-    });
 }
 
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -41,9 +36,7 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 <div class="row">
-    <div class="panel-title">
-        <button type="button" id="create-product" class="btn btn-primary" data-toggle="modal">Add Product</button>
-    </div>
+  
     <!-- Modal -->
     <div id="myModal" class="modal fade" role="dialog">
         <div class="modal-dialog">
@@ -55,31 +48,34 @@
                     <h4 class="modal-title">New Product Details</h4>
                 </div>
                 @*@using (Html.BeginForm("AddPaymentInfo", "Business", FormMethod.Post, new { @class = "form-horizontal" }))*@
-                @using (Ajax.BeginForm("AddProduct", "Business",
+                @using (Ajax.BeginForm("AddProduct", "Home",
                        new AjaxOptions()
                        {
                            OnSuccess = "onSuccess",
                            HttpMethod = "POST",
                            OnFailure = "onFailure"
-                       }, new { @class = "form-horizontal" }))
-                { 
+                       }, new { @class = "form-horizontal", enctype = "multipart/form-data" }))
+                {
                     <div class="modal-body">
                         <div class="form-group">
                             @Html.HiddenFor(h => h.ProductId)
+                            @Html.HiddenFor(h => h.Image)
                             <div class="col-sm-4">
                                 @Html.LabelFor(l => l.ProductTitle, new { @class = "" })
                                 @Html.TextBoxFor(t => t.ProductTitle, new { @class = "form-control", @placeholder = "Product Title" })
                                 @Html.ValidationMessageFor(t => t.ProductTitle)
                             </div>
                             <div class="col-sm-4">
-                                @Html.LabelFor(l => l.Image, new { @class = "" })
-                                <div class="col-md-10">
-                                    <input type="file" class="btn btn-default" id="Image" name="Image">
-                                    <p class="help-block">
-                                        Select Image...
-                                    </p>
-                                </div>
-                                @Html.ValidationMessageFor(t => t.Image)
+                                @Html.LabelFor(l => l.Images, new { @class = "" })
+                                @Html.TextBoxFor(m => m.Images, new { id = "Images", type = "file" })
+
+                                @*<div class="col-md-10">
+                                        <input type="file" class="btn btn-default" id="Images" multiple="multiple" name="Images">
+                                        <p class="help-block">
+                                            Select Image...
+                                        </p>
+                                    </div>*@
+                                @Html.ValidationMessageFor(t => t.Images)
                             </div>
                         </div>
                         <div class="form-group">
@@ -116,7 +112,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <input type="submit" class="btn btn-primary" value="Save Product" />
+                        <input type="button" class="btn btn-primary" id="submit-form" value="Save Product" />
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     </div>
                 }
@@ -127,6 +123,30 @@
 
     @* Modal End *@
 
+    <div class="col-md-8">
+        <div class="panel-heading">
+            <!-- Trigger the modal with a button -->
+            <br />
+            <div class="panel-title">
+                <button type="button" id="create-product" class="btn btn-primary" data-toggle="modal">Add Product</button>
+            </div>
+        </div>
+        <div class="panel-body">
+            <table id="example" class="table table-striped table-bordered dt-responsive nowrap" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Product Id</th>
+                        <th>Product Title</th>
+                        <th>Description</th>
+                        <th>Image</th>
+                        <th>Fare Per Day</th>
+                        <th>Payment Option</th>
+                        <th>Area Name</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
 </div>
 
 <link href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css" rel="stylesheet" />
@@ -152,8 +172,40 @@
 
 
 <script type="text/javascript">
-    $('#create-product').click(function () {
 
+    $('#example').dataTable({
+
+        "processing": true, // for show progress bar
+        "serverSide": false, // for process server side
+        "filter": true, // this is for disable filter (search box)
+        "orderMulti": false, // for disable multiple column at once
+        "ajax": {
+            "url": "@Url.Action("GetProducts", "Home")",
+            "type": "POST",
+            "datatype": "json"
+        },
+        "columns": [
+            { "data": "ProductId", "name": "ProductId", "autoWidth": true },
+            { "data": "ProductTitle", "name": "ProductTitle", "autoWidth": true },
+            { "data": "Description", "name": "Description", "autoWidth": true },
+            { "data": "Image", "name": "Image", "autoWidth": true },
+            { "data": "FarePerDay", "name": "FarePerDay", "autoWidth": true },
+            { "data": "PaymentOption", "name": "PaymentOption", "autoWidth": true },
+            { "data": "AreaName", "name": "AreaName", "autoWidth": true },
+        ]
+    });
+
+    $('#submit-form').click(function () {
+
+        $('#form0').submit();
+    });
+
+    $('#Images').change(function () {
+
+        $("#Image").val($(this).val());
+    });
+    $('#create-product').click(function () {
+        $('#form0')[0].reset();
         $('#myModal .modal-title').html('New Product Details');
         $('#myModal .btn-primary').html('Save Product');
 
@@ -161,4 +213,53 @@
         $('#myModal').modal('show');
 
     });
+
+    $('#CityId').change(function () {
+        $('#AreaId option').each(function () {
+            $(this).remove();
+        });
+        $.ajax({
+            url: '@Url.Action("GetArea", "Home")',
+            dataType: "json",
+            type: "POST",
+            data: JSON.stringify({ 'cityId': $('#CityId').val() }),
+            contentType: 'application/json; charset=utf-8',
+            async: true,
+            processData: false,
+            cache: false,
+            success: function (data) {
+
+                $('#AreaId')
+                    .append($("<option></option>")
+                        .attr("value", "")
+                        .text("Select Area"));
+                $.each(data, function (key, data) {
+                    $('#AreaId')
+                        .append($("<option></option>")
+                            .attr("value", data.Value)
+                            .text(data.Text));
+                });
+
+            },
+            error: function (xhr) {
+                console.log('Error occur at BindAreaList()');
+            }
+        });
+    });
+
+    function onSuccess(data) {
+        if (data == "success") {
+            alert("Successfully Saved.");
+            //Show Modal
+            $('#myModal').modal('hide');
+            $('#example').DataTable().ajax.reload();
+        }
+        else if (data == "error") {
+            alert("Error");
+        }
+    }
+    function onError(data) {
+        alert("Error");
+    }
+
 </script>

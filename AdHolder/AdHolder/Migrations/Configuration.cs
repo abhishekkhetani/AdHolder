@@ -9,8 +9,7 @@ namespace AdHolder.Migrations
     {
         public Configuration()
         {
-            AutomaticMigrationsEnabled = true;
-            ContextKey = "AdHolder.EFCodeFirstContext";
+            AutomaticMigrationsEnabled = false;
         }
 
         protected override void Seed(AdHolder.EFCodeFirstContext context)

@@ -15,8 +15,8 @@ namespace AdHolder
         {
         }
 
-        public DbSet<Register> Register { get; set; }
         public DbSet<Product> Product { get; set; }
+        public DbSet<Register> Register { get; set; }
         public DbSet<City> City { get; set; }
         public DbSet<Area> Area { get; set; }
 
@@ -28,7 +28,7 @@ namespace AdHolder
             base.OnModelCreating(modelBuilder);
             modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
             modelBuilder.Entity<Register>().ToTable("Register");
-            modelBuilder.Entity<Product>().ToTable("Product");
+            modelBuilder.Entity<Product>().ToTable("Products");
             modelBuilder.Entity<City>().ToTable("City");
             modelBuilder.Entity<Area>().ToTable("Area");
         }

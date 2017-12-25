@@ -1,6 +1,7 @@
 ﻿using AdHolder.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Validation;
 using System.Linq;
 using System.Web;
@@ -92,6 +93,81 @@ namespace AdHolder.Controllers
                 }
             }
             return Json("error", JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public ActionResult GetArea(int cityId)
+        {
+            if (cityId != 0)
+            {
+                using (var ctx = new EFCodeFirstContext())
+                {
+                    var areaList = new SelectList(ctx.Area.Where(s => s.CityRefId == cityId).ToList().Select(x => new { Value = x.AreaId, Text = x.Name }), "Value", "Text");
+
+                    return Json(areaList, JsonRequestBehavior.AllowGet);
+                }
+            }
+            else
+            {
+                return Json("error", JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult AddProduct(Product product)
+        {
+
+            HttpPostedFileBase myFile = Request.Files["Images"];
+            if (product.Images != null)
+            {
+                product.Image = product.Images.FileName;
+                ModelState.Remove("Image");
+            }
+            ModelState.Remove("ProductId");
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    using (var ctx = new EFCodeFirstContext())
+                    {
+                        ctx.Product.Add(product);
+                        ctx.SaveChanges();
+
+                        return Json("success", JsonRequestBehavior.AllowGet);
+                    }
+                }
+                catch (DbUpdateException e)
+                {
+                    throw e;
+                }
+            }
+            else
+            {
+                return Json("error", JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult GetProducts()
+        {
+            try
+            {
+                var productList = new List<Product>();
+                int recordsTotal = 0;
+                using (var context = new EFCodeFirstContext())
+                {
+                    productList = context.Product.ToList();
+                    recordsTotal = productList.Count();
+                    productList.ForEach(x => {
+                        x.AreaName = context.Area.Where(a => a.AreaId == x.AreaId).Select(s => s.Name).FirstOrDefault();
+                    });
+                }
+                return Json(new { recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = productList });
+            }
+            catch (DbUpdateException e)
+            {
+                throw e;
+            }
         }
     }
 }
