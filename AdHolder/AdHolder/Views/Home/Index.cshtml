@@ -36,7 +36,7 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 <div class="row">
-  
+
     <!-- Modal -->
     <div id="myModal" class="modal fade" role="dialog">
         <div class="modal-dialog">
@@ -120,6 +120,37 @@
 
         </div>
     </div>
+    <!-- Modal -->
+
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title" id="exampleModalLabel">Delete Payment Details</h4>
+                </div>
+                @using (Ajax.BeginForm("DeleteProductInfo", "Business",
+                       new AjaxOptions()
+                       {
+                           OnSuccess = "onSuccessDelete",
+                           HttpMethod = "POST",
+                           OnFailure = "onFailureDelete"
+                       }, new { @class = "form-horizontal" }))
+                { 
+
+                    <div class="modal-body">
+                        @Html.HiddenFor(h => h.ProductId)
+                        Are you sure you want to delete?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <input type="submit" class="btn btn-primary" value="Delete" />
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
 
     @* Modal End *@
 
@@ -142,6 +173,8 @@
                         <th>Fare Per Day</th>
                         <th>Payment Option</th>
                         <th>Area Name</th>
+                        <th>Edit</th>
+                        <th>Delete</th>
                     </tr>
                 </thead>
             </table>
@@ -192,6 +225,22 @@
             { "data": "FarePerDay", "name": "FarePerDay", "autoWidth": true },
             { "data": "PaymentOption", "name": "PaymentOption", "autoWidth": true },
             { "data": "AreaName", "name": "AreaName", "autoWidth": true },
+                {
+                    data: null, render: function (data, type, row) {
+                        return '<button class="btn btn-info" onclick="EditData(' + row.ProductId + ', \'' +
+                                                                                    row.ProductTitle + '\', \'' +
+                                                                                    row.Description + '\', \'' +
+                                                                                    row.Image + '\', \'' +
+                                                                                    row.farePerDay + '\', \'' +
+                                                                                    row.paymentOption + '\', \'' +
+                                                                                    row.areaName + '\'' + ')">Edit</button>';
+                    }
+                },
+                {
+                    data: null, render: function (data, type, row) {
+                        return "<a href='#' class='btn btn-danger' onclick=DeleteData('" + row.ProductId + "'); >Delete</a>";
+                    }
+                },
         ]
     });
 
@@ -260,6 +309,32 @@
     }
     function onError(data) {
         alert("Error");
+    }
+
+    function EditData(id, title, description, image, farePerDay, paymentOption, areaName) {
+
+        console.log(id, description, image,farePerDay, paymentOption, areaName);
+        $('#myModal .modal-title').html('Update Payment Details');
+        $('#myModal .btn-primary').html('Update');
+
+        //Bind values
+        $('#myModal #ProductId').val(id);
+        $('#myModal #ProductTitle').val(title);
+        $('#myModal #Description').val(description);
+        $('#myModal #Image').val(image);
+        $('#myModal #FarePerDay').val(farePerDay);
+        $('#myModal #PaymentOption').val(paymentOption);
+        $('#myModal #AreaName').val(areaName);
+
+        //Show Modal
+        $('#myModal').modal('show');
+    }
+    function DeleteData(ProduceId) {
+        //Bind values
+        $('#deleteModal #ProductId').val(ProduceId);
+
+        //Show Modal
+        $('#deleteModal').modal('show');
     }
 
 </script>

@@ -33,6 +33,34 @@ namespace AdHolder.Controllers
         }
 
         [HttpPost]
+        public ActionResult DeleteProductInfo(Product product)
+        {
+            if (product.ProductId > 0)
+            {
+                Product existProductDetails;
+                using (var ctx = new EFCodeFirstContext())
+                {
+                    existProductDetails = ctx.Product.Where(s => s.ProductId == product.ProductId).FirstOrDefault<Product>();
+                }
+
+                if (existProductDetails != null)
+                {
+                    using (var context = new EFCodeFirstContext())
+                    {
+                        context.Entry(existProductDetails).State = System.Data.Entity.EntityState.Deleted;
+                        context.SaveChanges();
+                    }
+                    return Json("success", JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    return Json("No Data", JsonRequestBehavior.AllowGet);
+                }
+            }
+            return Json("Error", JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
         public ActionResult AddCity(City city)
         {
             ModelState.Remove("CityId");
@@ -128,12 +156,30 @@ namespace AdHolder.Controllers
             {
                 try
                 {
+                    Product existProductDetails;
                     using (var ctx = new EFCodeFirstContext())
                     {
-                        ctx.Product.Add(product);
-                        ctx.SaveChanges();
+                        existProductDetails = ctx.Product.Where(s => s.ProductId == product.ProductId).FirstOrDefault<Product>();
+                    }
+                    if (existProductDetails == null)
+                    {
 
-                        return Json("success", JsonRequestBehavior.AllowGet);
+                        using (var ctx = new EFCodeFirstContext())
+                        {
+                            ctx.Product.Add(product);
+                            ctx.SaveChanges();
+                            return Json("success", JsonRequestBehavior.AllowGet);
+                        }
+                    }
+                    else
+                    {
+                        using (var context = new EFCodeFirstContext())
+                        {
+                            existProductDetails = product;
+                            context.Entry(existProductDetails).State = System.Data.Entity.EntityState.Modified;
+                            context.SaveChanges();
+                            return Json("success", JsonRequestBehavior.AllowGet);
+                        }
                     }
                 }
                 catch (DbUpdateException e)
