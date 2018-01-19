@@ -68,13 +68,15 @@
                             <div class="col-sm-4">
                                 @Html.LabelFor(l => l.Images, new { @class = "" })
                                 @Html.TextBoxFor(m => m.Images, new { id = "Images", type = "file" })
-
+                                <p class="help-block">
+                                    Image 500 KB or smaller.
+                                </p>
                                 @*<div class="col-md-10">
-                                        <input type="file" class="btn btn-default" id="Images" multiple="multiple" name="Images">
-                                        <p class="help-block">
-                                            Select Image...
-                                        </p>
-                                    </div>*@
+                                    <input type="file" class="btn btn-default" id="Images" multiple="multiple" name="Images">
+                                    <p class="help-block">
+                                        Select Image...
+                                    </p>
+                                </div>*@
                                 @Html.ValidationMessageFor(t => t.Images)
                             </div>
                         </div>
@@ -351,4 +353,43 @@
             return false;
         }
     });
+
+    var _URL = window.URL || window.webkitURL;
+
+    $("#Images").change(function (e) {
+        var file, img;
+        
+        if ((file = this.files[0])) {
+            img = new Image();
+            img.onload = function () {
+                var size = bytesToSize(file.size);
+                var sizeArray = size.split(' ');
+                if (sizeArray[1] == 'KB') {
+                    if (sizeArray[0] < 500) {
+                        return true;
+                    }
+                    else {
+                        $("#Images").val('');
+                        alert('Size is too large, please select proper image.');
+                    }
+                }
+                else {
+                    $("#Images").val('');
+                    alert('Size is too large, please select proper image.');
+                }
+            };
+            img.onerror = function () {
+                alert("not a valid file: " + file.type);
+                $("#Images").val('');
+            };
+            img.src = _URL.createObjectURL(file);
+        }
+    });
+
+    function bytesToSize(bytes) {
+        var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+        if (bytes == 0) return '0 Byte';
+        var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+        return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
+    };
 </script>
