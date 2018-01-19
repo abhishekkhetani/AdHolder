@@ -72,11 +72,11 @@
                                     Image 500 KB or smaller.
                                 </p>
                                 @*<div class="col-md-10">
-                                    <input type="file" class="btn btn-default" id="Images" multiple="multiple" name="Images">
-                                    <p class="help-block">
-                                        Select Image...
-                                    </p>
-                                </div>*@
+                                        <input type="file" class="btn btn-default" id="Images" multiple="multiple" name="Images">
+                                        <p class="help-block">
+                                            Select Image...
+                                        </p>
+                                    </div>*@
                                 @Html.ValidationMessageFor(t => t.Images)
                             </div>
                         </div>
@@ -138,7 +138,7 @@
                            HttpMethod = "POST",
                            OnFailure = "onFailureDelete"
                        }, new { @class = "form-horizontal" }))
-                { 
+                {
 
                     <div class="modal-body">
                         @Html.HiddenFor(h => h.ProductId)
@@ -203,8 +203,6 @@
 
 <script src="https://cdn.datatables.net/buttons/1.4.2/js/buttons.print.min.js"></script>
 <script src="https://cdn.datatables.net/select/1.2.3/js/dataTables.select.min.js"></script>
-
-
 
 <script type="text/javascript">
 
@@ -358,7 +356,7 @@
 
     $("#Images").change(function (e) {
         var file, img;
-        
+
         if ((file = this.files[0])) {
             img = new Image();
             img.onload = function () {

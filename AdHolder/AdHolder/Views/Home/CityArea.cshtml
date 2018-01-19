@@ -18,7 +18,7 @@
                            HttpMethod = "POST",
                            OnFailure = "onFailure"
                        }, new { @class = "form-horizontal" }))
-                { 
+                {
                     <div class="form-group">
                         <div class="col-sm-10">
                             @*<input type="email" class="form-control" id="inputEmail3" placeholder="Email">*@
@@ -50,14 +50,14 @@
                            HttpMethod = "POST",
                            OnFailure = "onFailure"
                        }, new { @class = "form-horizontal" }))
-                    { 
+                    {
                         <div class="form-group">
                             <div class="col-sm-10">
                                 @*<input type="email" class="form-control" id="inputEmail3" placeholder="Email">*@
                                 @Html.DropDownListFor(t => t.CityId, (IEnumerable<SelectListItem>)ViewBag.Cities, "Select City", new { @class = "form-control", @placeholder = "City Name" })
                                 @Html.ValidationMessageFor(t => t.Name)
                             </div>
-                        </div>                    
+                        </div>
                         <div class="form-group">
                             <div class="col-sm-10">
                                 @*<input type="email" class="form-control" id="inputEmail3" placeholder="Email">*@
@@ -75,44 +75,45 @@
             </div>
         </div>
     </div>
+</div>
 
-    <script type="text/javascript">
+<script type="text/javascript">
 
-        function onSuccess(data) {
-            if (data == "success") {
-                $('#CityId').val($("#CityId option:first").val());
-                $('#AreaName').val('');
+    function onSuccess(data) {
+        if (data == "success") {
+            $('#CityId').val($("#CityId option:first").val());
+            $('#AreaName').val('');
 
-                alert("Successfully Saved.");
-                return false;
-            }
-            else if (data == "exist") {
-                alert("Already Exist");
-                return false;
-            }
-            else if (data == "error") {
-                alert("Please enter data properly");
-                return false;
-            }
-            else {
-                $('#CityId option').each(function () {
-                    $(this).remove();
-                });
+            alert("Successfully Saved.");
+            return false;
+        }
+        else if (data == "exist") {
+            alert("Already Exist");
+            return false;
+        }
+        else if (data == "error") {
+            alert("Please enter data properly");
+            return false;
+        }
+        else {
+            $('#CityId option').each(function () {
+                $(this).remove();
+            });
+            $('#CityId')
+                .append($("<option></option>")
+                    .attr("value", "")
+                    .text("Select City"));
+            $.each(data, function (key, data) {
                 $('#CityId')
                     .append($("<option></option>")
-                                   .attr("value", "")
-                                   .text("Select City"));
-                $.each(data, function (key, data) {
-                    $('#CityId')
-                        .append($("<option></option>")
-                                   .attr("value", data.Value)
-                                   .text(data.Text));
-                });
-                $('#Name').val('');
-                alert("Successfully Added");
-            }
+                        .attr("value", data.Value)
+                        .text(data.Text));
+            });
+            $('#Name').val('');
+            alert("Successfully Added");
         }
+    }
 
-        function onFailure(data) {
-        }
-    </script>
+    function onFailure(data) {
+    }
+</script>
