@@ -205,6 +205,8 @@ namespace AdHolder.Controllers
                     productList = context.Product.ToList();
                     recordsTotal = productList.Count();
                     productList.ForEach(x => {
+                        int cityId = context.Area.Where(a => a.AreaId == x.AreaId).Select(s => s.CityRefId).FirstOrDefault();
+                        x.City =  context.City.Where(a => a.CityId == cityId).Select(s => s.Name).FirstOrDefault();
                         x.AreaName = context.Area.Where(a => a.AreaId == x.AreaId).Select(s => s.Name).FirstOrDefault();
                     });
                 }

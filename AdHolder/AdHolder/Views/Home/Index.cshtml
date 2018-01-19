@@ -231,9 +231,10 @@
                                                                                     row.ProductTitle + '\', \'' +
                                                                                     row.Description + '\', \'' +
                                                                                     row.Image + '\', \'' +
-                                                                                    row.farePerDay + '\', \'' +
-                                                                                    row.paymentOption + '\', \'' +
-                                                                                    row.areaName + '\'' + ')">Edit</button>';
+                                                                                    row.FarePerDay + '\', \'' +
+                                                                                    row.PaymentOption + '\', \'' +
+                                                                                    row.City + '\', \'' +
+                                                                                    row.AreaName + '\'' + ')">Edit</button>';
                     }
                 },
                 {
@@ -311,9 +312,9 @@
         alert("Error");
     }
 
-    function EditData(id, title, description, image, farePerDay, paymentOption, areaName) {
+    function EditData(id, title, description, image, farePerDay, paymentOption, city, areaName) {
 
-        console.log(id, description, image,farePerDay, paymentOption, areaName);
+        console.log(id, description, image, farePerDay, paymentOption, city, areaName);
         $('#myModal .modal-title').html('Update Payment Details');
         $('#myModal .btn-primary').html('Update');
 
@@ -324,7 +325,11 @@
         $('#myModal #Image').val(image);
         $('#myModal #FarePerDay').val(farePerDay);
         $('#myModal #PaymentOption').val(paymentOption);
-        $('#myModal #AreaName').val(areaName);
+        //$('#myModel #City').text(city);
+        $("#myModel #CityId option:contains(" + city + ")").attr('selected', 'selected');
+        $("#myModal #AreaId option:contains(" + areaName + ")").attr('selected', 'selected');
+
+        //$('#myModal #AreaName').text(areaName);
 
         //Show Modal
         $('#myModal').modal('show');
@@ -337,4 +342,13 @@
         $('#deleteModal').modal('show');
     }
 
+    $('#ProductTitle').keypress(function (e) {
+
+        var txt = String.fromCharCode(e.which);
+        console.log(txt + ' : ' + e.which);
+        if (!txt.match(/[A-Za-z0-9]/))
+        {
+            return false;
+        }
+    });
 </script>

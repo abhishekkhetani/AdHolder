@@ -44,6 +44,9 @@ namespace AdHolder.Models
         [NotMapped]
         public string AreaName { get; set; }
 
+        [NotMapped]
+        public string City { get; set; }
+
         [Required]
         [DisplayName("Area")]
         public int AreaId { get; set; }
